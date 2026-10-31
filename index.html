@@ -150,7 +150,8 @@ body:not(.is-3d) .only-3d { display:none; }
 .hint { position:fixed; right:24px; bottom:24px; z-index:10; font-size:12px; color:var(--g400); letter-spacing:.4px; padding:6px 14px; border-radius:var(--r-full); }
 .fly .hint { opacity:0; }
 
-#scene { position:fixed; inset:0; width:100%; height:100%; display:none; }
+#scene { position:fixed; inset:0; width:100%; height:100%; display:none; opacity:0; transition:opacity .9s ease; }
+.ready #scene { opacity:1; }
 
 /* Panels (About / Contact) */
 .panel-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; font-size:13px; color:var(--g400); }
@@ -237,6 +238,15 @@ body:not(.is-3d) .hud, body:not(.is-3d) .hint { display:none; }
 body:not(.is-3d) main { padding:48px 16px; display:grid; gap:24px; max-width:1100px; margin:0 auto; }
 body:not(.is-3d) .panel { padding:28px 20px; border-radius:var(--r-xl); background:var(--glass-bg); border:var(--glass-border); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); box-shadow:var(--glass-shine); }
 
+/* Static page on wide screens (reduced motion, no WebGL, or while falling back): hero beside a large photo */
+@media (min-width:768px) {
+  body:not(.is-3d) .topbar { max-width:1100px; margin:12px auto; }
+  body:not(.is-3d) .intro { display:grid; grid-template-columns:1fr minmax(240px,380px); gap:32px; align-items:center; max-width:1100px; margin:0 auto; padding:48px 16px 0; }
+  body:not(.is-3d) .hero { margin-bottom:0; }
+  body:not(.is-3d) .photo { width:100%; height:auto; aspect-ratio:1; margin:0; }
+  body:not(.is-3d) .name { grid-column:1/-1; font-size:clamp(72px,11vw,150px); }
+}
+
 /* ---------- 3D mode ---------- */
 .is-3d { overflow:hidden; height:100vh; }
 .is-3d #scene { display:block; }
@@ -256,6 +266,14 @@ body:not(.is-3d) .panel { padding:28px 20px; border-radius:var(--r-xl); backgrou
 </style>
 </head>
 <body>
+<script>
+  // Decide 3D vs static before first paint, so wide screens never flash the phone layout while Three.js downloads.
+  window.want3d = () => innerWidth >= 768 && !matchMedia('(prefers-reduced-motion: reduce)').matches && !!document.createElement('canvas').getContext('webgl');
+  if (want3d()) {
+    document.body.classList.add('is-3d');
+    window.fallback3d = setTimeout(() => { if (!window.ready3d) document.body.classList.remove('is-3d'); }, 15000);   // 3D never arrived → static page
+  }
+</script>
 
 <header class="topbar glass">
   <a class="mark" href="#top" id="home" aria-label="Shiva Vashishtha, back to portrait">S</a>
@@ -436,8 +454,17 @@ tabs.forEach((t, i) => {
 import * as THREE from 'three';
 
 // ponytail: 3D only on wide screens with motion allowed; everyone else gets the static page.
-if (innerWidth >= 768 && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-  start().catch(err => console.warn('3D view disabled:', err));
+let booted = false;
+function boot() {
+  if (booted || !want3d()) return;
+  booted = true;
+  scrollTo(0, 0);
+  document.body.classList.add('is-3d');
+  start().then(() => { window.ready3d = true; clearTimeout(window.fallback3d); document.body.classList.add('is-3d', 'ready'); })
+    .catch(err => { console.warn('3D view disabled:', err); clearTimeout(window.fallback3d); document.body.classList.remove('is-3d'); });
+}
+boot();
+addEventListener('resize', boot);   // a window opened narrow and then maximised still gets the 3D view
 
 async function start() {
   const canvas = document.getElementById('scene');
