@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shiva Vashishtha | Data Analytics & GenAI Trainer for Teams and Campuses</title>
+<meta name="description" content="IIT Jodhpur MTech and working data consultant. 60,000+ learners trained in SQL, Python, Power BI and AI automation for Scaler, Syntax Technologies (USA), PROFORMATION (Paris) and 40+ colleges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Palette: coolors.co f8f9fa → 212529 (only these nine greys, plus their transparencies for glass).
+   Radii, button shapes and layout rules still follow DESIGN.md. */
+:root {
+  --g50:#f8f9fa; --g100:#e9ecef; --g200:#dee2e6; --g300:#ced4da; --g400:#adb5bd;
+  --g500:#6c757d; --g600:#495057; --g700:#343a40; --g800:#212529;
+  --line:rgba(222,226,230,.12); --line-strong:rgba(222,226,230,.22);
+  /* Glass recipe */
+  --glass-bg:linear-gradient(135deg, rgba(248,249,250,.12), rgba(248,249,250,.03));
+  --glass-border:1px solid rgba(248,249,250,.16);
+  --glass-blur:blur(22px) saturate(140%);
+  --glass-shine:inset 0 1px 0 rgba(248,249,250,.22), inset 0 -1px 0 rgba(33,37,41,.4);
+  --r-sm:6px; --r-md:8px; --r-lg:12px; --r-xl:18px; --r-full:9999px;
+  --serif:'Instrument Serif',Georgia,serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--g800); color:var(--g50); font:400 15px/1.55 'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+a { color:inherit; }
+button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+:focus-visible { outline:2px solid var(--g50); outline-offset:3px; border-radius:4px; }
+
+.glass { background:var(--glass-bg); border:var(--glass-border); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); box-shadow:var(--glass-shine); }
+
+.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 18px; border-radius:var(--r-md); font-size:14px; font-weight:500; line-height:1.3; text-decoration:none; border:1px solid transparent; }
+.btn-primary { background:var(--g50); color:var(--g800); box-shadow:inset 0 -1px 0 var(--g300); }
+.btn-primary:hover { background:var(--g100); }
+.btn-primary:active { background:var(--g200); }
+.btn-outline { background:var(--glass-bg); border:var(--glass-border); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); box-shadow:var(--glass-shine); color:var(--g50); }
+.btn-outline:hover { border-color:rgba(248,249,250,.35); }
+
+/* Top bar: floating glass strip */
+.topbar { position:fixed; top:12px; left:12px; right:12px; z-index:30; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:24px; align-items:center;
+  padding:12px 20px; font-size:13px; border-radius:var(--r-xl); }
+.mark { width:34px; height:34px; border-radius:var(--r-md); background:var(--g50); color:var(--g800); display:grid; place-items:center; font:italic 400 20px/1 var(--serif); text-decoration:none; }
+.topbar dt { color:var(--g400); font-size:12px; }
+.topbar dd { line-height:1.4; color:var(--g100); }
+.topbar nav { display:flex; gap:14px; }
+.topbar nav a { text-decoration:none; }
+.topbar nav a:hover { color:var(--g50); text-decoration:underline; text-underline-offset:4px; }
+body:not(.is-3d) .only-3d { display:none; }
+.photo { display:block; width:160px; height:160px; object-fit:cover; object-position:66% 28%; border-radius:var(--r-xl); filter:grayscale(1) contrast(1.05);
+  border:var(--glass-border); box-shadow:var(--glass-shine); margin-bottom:20px; }
+.is-3d .photo { display:none; }
+
+/* Intro overlay */
+.intro { position:fixed; inset:auto 0 0; z-index:10; padding:0 32px; pointer-events:none; transition:opacity .4s; }
+.hero { max-width:520px; padding:22px 24px; border-radius:var(--r-xl); margin-bottom:10px; pointer-events:auto; }
+.hero .eyebrow { font-size:12px; font-weight:500; letter-spacing:.4px; color:var(--g400); }
+.hero .pitch { font:italic 400 34px/1.08 var(--serif); color:var(--g50); margin:8px 0 10px; letter-spacing:-.3px; }
+.hero .support { font-size:14px; color:var(--g300); }
+.hero .actions { display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 14px; }
+.hero .trust { font-size:12px; color:var(--g300); padding-top:12px; border-top:1px solid var(--line); }
+.hero .trust span { color:var(--g500); margin-right:4px; }
+.hero-quote { font:italic 400 15px/1.35 var(--serif); color:var(--g200); margin-top:10px; }
+.hero-quote span { font:400 11px 'Inter',sans-serif; color:var(--g500); margin-left:4px; }
+.name { font:italic 400 clamp(64px,13.5vw,230px)/.86 var(--serif); letter-spacing:-.02em; white-space:nowrap; margin:0 -.04em -.08em;
+  background:linear-gradient(180deg, var(--g50) 35%, var(--g500)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+/* Fly-through HUD */
+.hud { position:fixed; inset:auto 24px 24px; z-index:10; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; opacity:0; pointer-events:none; transition:opacity .4s; }
+.fly .hud { opacity:1; pointer-events:auto; }
+.fly .intro { opacity:0; }
+.hud-now { display:flex; align-items:center; gap:16px; padding:12px 20px 12px 16px; border-radius:var(--r-xl); }
+.hud-num { font:italic 400 52px/1 var(--serif); color:var(--g50); }
+.hud-chapter { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--g500); }
+.hud-title { font-size:17px; font-weight:500; }
+.hud-sub { font-size:13px; color:var(--g400); }
+.hud-right { display:flex; align-items:center; gap:12px; font-size:13px; color:var(--g400); }
+.hint { position:fixed; right:24px; bottom:24px; z-index:10; font-size:12px; color:var(--g400); letter-spacing:.4px; padding:6px 14px; border-radius:var(--r-full); }
+.fly .hint { opacity:0; }
+
+#scene { position:fixed; inset:0; width:100%; height:100%; display:none; }
+
+/* Panels (About / Contact) */
+.panel-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; font-size:13px; color:var(--g400); }
+.close { display:none; align-items:center; gap:8px; padding:6px 12px 6px 8px; border-radius:var(--r-full); font-size:13px; color:var(--g50); }
+.panel h2 { font:italic 400 44px/1.08 var(--serif); letter-spacing:-.5px; margin-bottom:20px; }
+.panel h2 em { font-style:inherit; color:var(--g400); }
+.panel p { color:var(--g300); }
+.panel p + p { margin-top:12px; }
+.facts { display:grid; grid-template-columns:1fr 1fr; gap:24px 32px; margin:32px 0; padding:24px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-size:14px; color:var(--g100); }
+.facts dt { font-size:12px; color:var(--g400); margin-bottom:4px; }
+.facts a { text-decoration-color:var(--g500); text-underline-offset:3px; }
+.label { font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--g400); margin:32px 0 12px; }
+
+/* Training Tracker: workspace card from DESIGN.md, in glass */
+.mockup { border-radius:var(--r-lg); padding:20px; overflow-x:auto; }
+.mockup h3 { font-size:18px; font-weight:600; }
+.mockup .meta { font-size:12px; color:var(--g400); margin:2px 0 12px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; font-weight:500; color:var(--g400); padding:6px 8px; border-bottom:1px solid var(--line-strong); }
+td { padding:9px 8px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--g200); }
+tr:last-child td { border-bottom:0; }
+td:first-child { font-weight:500; color:var(--g50); }
+.tag { display:inline-block; padding:2px 8px; border-radius:var(--r-sm); font-size:12px; font-weight:600; white-space:nowrap; }
+.t-mint { background:var(--g50); color:var(--g800); }
+.t-lavender { background:var(--g400); color:var(--g800); }
+.t-peach { background:var(--g600); color:var(--g50); }
+
+/* Experience tabs */
+.tabs { display:flex; gap:8px; margin-bottom:12px; }
+.tab { padding:6px 14px; border-radius:var(--r-full); border:1px solid var(--line-strong); color:var(--g400); font-size:13px; font-weight:500; }
+.tab[aria-selected="true"] { background:var(--g50); border-color:var(--g50); color:var(--g800); }
+.quote { border-radius:var(--r-lg); padding:18px 20px; margin-bottom:10px; }
+.quote blockquote { font:italic 400 21px/1.3 var(--serif); color:var(--g50); }
+.quote figcaption { font-size:12px; color:var(--g400); margin-top:8px; }
+.recs { font-size:13px; } .recs a { text-underline-offset:3px; }
+.articles { list-style:none; font-size:14px; color:var(--g200); }
+.articles li { padding:10px 0; border-bottom:1px solid var(--line); }
+.articles span { display:block; font-size:12px; color:var(--g400); }
+.role { padding:14px 0; border-bottom:1px solid var(--line); }
+.role:last-child { border-bottom:0; }
+.role h4 { font-size:15px; font-weight:500; }
+.role .org { font-size:13px; color:var(--g400); }
+.role p { font-size:13px; margin-top:4px; }
+[hidden] { display:none !important; }
+
+.cta { margin-top:32px; padding:24px; border-radius:var(--r-lg); }
+.cta small { color:var(--g400); font-size:12px; }
+.cta strong { display:block; font:italic 400 30px/1.15 var(--serif); margin:4px 0 16px; }
+.cta .row { display:flex; gap:10px; flex-wrap:wrap; }
+.email { display:inline-block; font:italic 400 clamp(26px,4vw,36px)/1.2 var(--serif); color:var(--g50); text-decoration:underline; text-decoration-color:var(--g500); text-underline-offset:6px; text-decoration-thickness:1px; margin:8px 0 24px; word-break:break-all; }
+
+/* Programme cards (static view; the 3D view draws the same data) */
+.work { list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr)); gap:12px; }
+main > * { min-width:0; }
+.work li { border-radius:var(--r-lg); padding:24px; background:var(--glass-bg); border:var(--glass-border); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); box-shadow:var(--glass-shine); }
+.work .num { font-size:12px; color:var(--g400); }
+.work .tag { background:rgba(248,249,250,.12); border:1px solid rgba(248,249,250,.18); color:var(--g100); float:right; }
+.work h3 { font-size:20px; font-weight:600; line-height:1.3; color:var(--g50); margin:14px 0 4px; }
+.work .org { font-size:14px; font-weight:500; color:var(--g200); }
+.work .d { font-size:13px; color:var(--g400); margin-top:8px; }
+.chapter-title { font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--g400); margin:28px 0 12px; }
+#work-title { font:italic 400 40px/1.1 var(--serif); margin-bottom:8px; }
+.formats { list-style:none; margin:24px 0; display:grid; gap:10px; }
+.formats li { padding:14px 16px; border-radius:var(--r-lg); background:rgba(248,249,250,.05); border:1px solid var(--line); font-size:14px; color:var(--g300); }
+.formats b { display:block; color:var(--g50); font-weight:600; margin-bottom:2px; }
+.contact-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.small-print { font-size:12px; color:var(--g400) !important; margin-top:16px !important; }
+em.rule { font-style:italic; color:var(--g50); }
+
+/* ---------- Static (default: phones, reduced motion, no WebGL) ---------- */
+body:not(.is-3d) { background:
+  radial-gradient(60vmax 60vmax at 85% 5%, var(--g600), transparent 60%),
+  radial-gradient(50vmax 50vmax at 0% 45%, var(--g700), transparent 60%),
+  radial-gradient(55vmax 55vmax at 90% 85%, var(--g600), transparent 60%),
+  var(--g800); background-attachment:fixed; }
+body:not(.is-3d) .topbar { position:sticky; grid-template-columns:auto 1fr; gap:12px 16px; padding:12px 16px; margin:12px; }
+body:not(.is-3d) .topbar .nav-col { grid-column:1/-1; }
+body:not(.is-3d) .topbar .based { display:none; }
+body:not(.is-3d) .intro { position:static; padding:40px 16px 0; pointer-events:auto; }
+body:not(.is-3d) .hero { margin-bottom:24px; padding:20px; }
+body:not(.is-3d) .hero .pitch { font-size:30px; }
+body:not(.is-3d) .name { white-space:normal; font-size:clamp(56px,16vw,140px); margin:0; }
+body:not(.is-3d) .hud, body:not(.is-3d) .hint { display:none; }
+body:not(.is-3d) main { padding:48px 16px; display:grid; gap:24px; max-width:1100px; margin:0 auto; }
+body:not(.is-3d) .panel { padding:28px 20px; border-radius:var(--r-xl); background:var(--glass-bg); border:var(--glass-border); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); box-shadow:var(--glass-shine); }
+
+/* ---------- 3D mode ---------- */
+.is-3d { overflow:hidden; height:100vh; }
+.is-3d #scene { display:block; }
+.is-3d .panel.panel-wide { width:min(1100px,calc(100vw - 24px)); }
+.is-3d .work li { cursor:pointer; transition:border-color .2s; }
+.is-3d .work li:hover, .is-3d .work li:focus-visible { border-color:rgba(248,249,250,.4); }
+.is-3d .panel { position:fixed; z-index:40; top:84px; left:12px; bottom:12px; width:min(560px,calc(100vw - 24px)); overflow-y:auto; overscroll-behavior:contain;
+  padding:28px 32px 32px; border-radius:var(--r-xl);
+  background:linear-gradient(135deg, rgba(73,80,87,.45), rgba(33,37,41,.55)); border:var(--glass-border);
+  backdrop-filter:blur(28px) saturate(150%); -webkit-backdrop-filter:blur(28px) saturate(150%); box-shadow:var(--glass-shine), 0 30px 80px rgba(33,37,41,.7);
+  visibility:hidden; transform:translateX(calc(-100% - 24px)); transition:transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s .55s; }
+.is-3d .panel.open { visibility:visible; transform:none; transition:transform .55s cubic-bezier(.2,.8,.2,1); }
+.is-3d .close { display:inline-flex; }
+
+@media (max-width:1100px) { .topbar { grid-template-columns:auto 1fr 1fr; } .topbar .based { display:none; } }
+@media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header class="topbar glass">
+  <a class="mark" href="#top" id="home" aria-label="Shiva Vashishtha, back to portrait">S</a>
+  <dl><dt>Currently:</dt><dd>Data &amp; GenAI Trainer<br>Senior Data Consultant, AllianceTek</dd></dl>
+  <dl class="based"><dt>Based in:</dt><dd>Gurugram, India (<span id="clock">IST</span>) · Teaching worldwide</dd></dl>
+  <dl class="nav-col"><dt>Navigation:</dt><dd><nav aria-label="Main"><a href="#work">Programmes</a><a href="#results">Results</a><a href="#about">About</a><a href="#contact">Work with me</a></nav></dd></dl>
+</header>
+
+<div class="intro" id="top">
+  <div class="hero glass">
+    <p class="eyebrow">Data Analytics · Business Analytics · GenAI Automation</p>
+    <p class="pitch">I turn teams and students into job-ready data people.</p>
+    <p class="support">60,000+ learners and 5,000+ professionals trained in SQL, Python, Power BI and AI automation. IIT Jodhpur MTech, and still a working data consultant, so I teach what industry uses today.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#contact">Book a training call</a>
+      <a class="btn btn-outline" href="#work">See programmes ↓</a>
+    </div>
+    <p class="trust"><span>Trusted by</span> Scaler · Syntax Technologies (USA) · PROFORMATION (Paris) · Jobaaj Learnings · 40+ colleges incl. IITs &amp; NITs</p>
+    <p class="hero-quote">“He has a unique ability to break down complex concepts and make them easily understandable.” <span>Viplav B., mentee</span></p>
+  </div>
+  <img class="photo" src="assets/shiva.jpg" alt="Shiva Vashishtha speaking at a podium" width="160" height="160">
+  <h1 class="name">Shiva Vashishtha</h1>
+</div>
+
+<div class="hud">
+  <div class="hud-now glass" aria-live="polite"><span class="hud-num" id="hud-num">01</span><div><div class="hud-chapter" id="hud-chapter"></div><div class="hud-title" id="hud-title"></div><div class="hud-sub" id="hud-sub"></div></div></div>
+  <div class="hud-right">
+    <button class="btn btn-outline" id="see-all">See all</button>
+    <button class="btn btn-outline" id="back">Back to portrait</button>
+    <a class="btn btn-primary" href="#contact">Book a call</a>
+  </div>
+</div>
+<p class="hint glass" aria-hidden="true">Scroll to explore programmes and results</p>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+
+<main>
+  <section class="panel panel-wide" id="work" aria-labelledby="work-title" tabindex="-1">
+    <div class="panel-head"><button class="close glass" data-close>← Close</button><span>All programmes</span></div>
+    <h2 id="work-title">What I teach, results &amp; credentials</h2>
+
+    <h3 class="chapter-title">What I teach</h3>
+    <ol class="work">
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">01</span><h3>Job-ready Data Analytics</h3><p class="org">Scaler Academy · aspiring analysts</p><p class="d">From raw data to a finished dashboard: SQL, Python, Power BI and Excel on real datasets.</p></li>
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">02</span><h3>Data Analytics Bootcamp</h3><p class="org">Syntax Technologies, USA · global cohorts</p><p class="d">Live classes plus mock interviews, resume reviews and 1:1 mentoring until you're interview-ready.</p></li>
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">03</span><h3>AI Automation with n8n + Claude</h3><p class="org">PROFORMATION, Paris · business teams</p><p class="d">Teams build working AI workflows that remove manual tasks, with no complex code.</p></li>
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">04</span><h3>HR &amp; Finance Analytics</h3><p class="org">PROFORMATION, Paris · HR and finance teams</p><p class="d">Turn people and finance data into Power BI and Excel reports leaders actually use.</p></li>
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">05</span><h3>Corporate Analytics Bootcamps</h3><p class="org">Jobaaj Learnings · companies</p><p class="d">5,000+ professionals upskilled on case studies from FMCG, banking, EdTech and retail.</p></li>
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">06</span><h3>AI &amp; Prompt Engineering (30 hrs)</h3><p class="org">DME Media School · with MakeIntern</p><p class="d">Media students learned to research, build and visualise with NotebookLM and AI tools.</p></li>
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">07</span><h3>Business Analytics for MBAs</h3><p class="org">AKGIM Ghaziabad · with Masterli Learning</p><p class="d">A hands-on workshop that gives future managers a data-first way to decide.</p></li>
+      <li data-chapter="What I teach"><span class="tag">Programme</span><span class="num">08</span><h3>Campus Analytics Workshops</h3><p class="org">25+ colleges incl. IITs &amp; NITs · as IIM Calcutta's rep</p><p class="d">KPI reporting, dashboards and data storytelling for engineering and management students.</p></li>
+    </ol>
+
+    <h3 class="chapter-title">Results from the field</h3>
+    <ol class="work" start="9">
+      <li data-chapter="Results" id="results"><span class="tag">Result</span><span class="num">09</span><h3>50% faster reporting</h3><p class="org">Schneider Electric</p><p class="d">Python and VBA automation halved reporting time. It's now a module I teach.</p></li>
+      <li data-chapter="Results"><span class="tag">Result</span><span class="num">10</span><h3>3–4 hours saved, every day</h3><p class="org">Nishtya Infotech</p><p class="d">A sales CRM and Excel KPI dashboard gave each sales rep half a morning back.</p></li>
+      <li data-chapter="Results"><span class="tag">Result</span><span class="num">11</span><h3>25–30% lower ad costs</h3><p class="org">Nishtya Infotech</p><p class="d">A Tableau + SQL Server demographics dashboard showed marketing where to stop spending.</p></li>
+      <li data-chapter="Results"><span class="tag">Result</span><span class="num">12</span><h3>Rider segments → product roadmap</h3><p class="org">AllianceTek</p><p class="d">Turned ride-hailing behaviour data into segments that shaped what got built next.</p></li>
+    </ol>
+
+    <h3 class="chapter-title">Credentials</h3>
+    <ol class="work" start="13">
+      <li data-chapter="Credentials"><span class="tag">Credential</span><span class="num">13</span><h3>MTech, Data Engineering</h3><p class="org">IIT Jodhpur · 2024</p><p class="d">Minor in Data Science &amp; Generative AI.</p></li>
+      <li data-chapter="Credentials"><span class="tag">Credential</span><span class="num">14</span><h3>Co-author: Advanced Machine Learning Algorithms</h3><p class="org">Published book</p><p class="d">The practical ML reference I use in my own classes.</p></li>
+      <li data-chapter="Credentials"><span class="tag">Credential</span><span class="num">15</span><h3>Certified + 43K community</h3><p class="org">Udacity · IBM · LinkedIn</p><p class="d">Data Scientist Nanodegree and IBM Applied AI, plus 43K followers who use my SQL, DAX and Excel cheat sheets.</p></li>
+    </ol>
+  </section>
+
+  <aside class="panel" id="about" aria-labelledby="about-title" tabindex="-1">
+    <div class="panel-head"><button class="close glass" data-close>← Close</button><span>About</span></div>
+    <h2 id="about-title">I teach people to turn data into <em>decisions.</em></h2>
+    <p>I'm Shiva. I started as a data analyst, building CRMs, dashboards and automation scripts that saved real hours and real money. I still consult as a Senior Data Consultant at AllianceTek, so what I teach is what's working in industry right now.</p>
+    <p>Today I train aspiring analysts, college students and corporate teams across India, the USA and Europe: at Scaler, Syntax Technologies, PROFORMATION and Jobaaj Learnings, and on 40+ campuses including IITs and NITs.</p>
+    <p>My rule: <em class="rule">portfolio beats paper.</em> Every session ends with something learners built on real data.</p>
+    <dl class="facts">
+      <div><dt>Education</dt><dd>MTech, Data Engineering, IIT Jodhpur (2024)<br>BTech CS, AKTU (2021)</dd></div>
+      <div><dt>Publication</dt><dd>Co-author, <i>Advanced Machine Learning Algorithms</i></dd></div>
+      <div><dt>Reach</dt><dd>60,000+ students and 5,000+ professionals. 40+ colleges overall, 25+ as IIM Calcutta's representative</dd></div>
+      <div><dt>Certifications</dt><dd>Udacity Data Scientist Nanodegree<br>IBM Applied AI (Coursera)<br>IBM Data Science Foundations</dd></div>
+      <div><dt>On LinkedIn</dt><dd>43K followers. I post SQL, DAX and Excel cheat sheets on <a href="https://linkedin.com/in/shivavashishtha" target="_blank" rel="noopener">LinkedIn ↗</a></dd></div>
+    </dl>
+
+    <div class="mockup glass">
+      <h3>Teaching now</h3>
+      <p class="meta">Programmes running this year</p>
+      <table>
+        <thead><tr><th>Programme</th><th>Where</th><th>Format</th></tr></thead>
+        <tbody>
+          <tr><td>Data Analytics</td><td>Scaler Academy</td><td><span class="tag t-mint">Live cohort</span></td></tr>
+          <tr><td>Analytics Bootcamp</td><td>Syntax Technologies, USA</td><td><span class="tag t-mint">Live cohort</span></td></tr>
+          <tr><td>n8n + Claude AI</td><td>PROFORMATION, Paris</td><td><span class="tag t-lavender">Corporate</span></td></tr>
+          <tr><td>Corporate Bootcamps</td><td>Jobaaj Learnings</td><td><span class="tag t-lavender">Corporate</span></td></tr>
+          <tr><td>Business Analytics</td><td>40+ colleges</td><td><span class="tag t-peach">Campus</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="label">What learners say</p>
+    <figure class="quote glass"><blockquote>“He has a unique ability to break down complex concepts and make them easily understandable for students at all levels.”</blockquote><figcaption>Viplav B., data science mentee</figcaption></figure>
+    <figure class="quote glass"><blockquote>“An unparalleled level of expertise, patience, and dedication in guiding me through the intricacies of data analysis.”</blockquote><figcaption>Er. Rakesh Kumar, data analytics mentee</figcaption></figure>
+    <p class="recs">5 recommendations on <a href="https://linkedin.com/in/shivavashishtha" target="_blank" rel="noopener">LinkedIn ↗</a></p>
+
+    <p class="label">Experience</p>
+    <div class="tabs" role="tablist" aria-label="Experience type">
+      <button class="tab" role="tab" id="tab-training" aria-selected="true" aria-controls="panel-training">Training</button>
+      <button class="tab" role="tab" id="tab-industry" aria-selected="false" aria-controls="panel-industry" tabindex="-1">Industry</button>
+    </div>
+    <div role="tabpanel" id="panel-training" aria-labelledby="tab-training">
+      <div class="role"><h4>Data Analytics Trainer</h4><div class="org">Scaler Academy · Apr 2026 – Present</div></div>
+      <div class="role"><h4>Analytics &amp; Automation Consultant (Trainer)</h4><div class="org">PROFORMATION, Paris · Apr 2026 – Present</div></div>
+      <div class="role"><h4>Program Director, Data Analytics Bootcamp</h4><div class="org">Syntax Technologies, USA · Aug 2023 – Present</div></div>
+      <div class="role"><h4>Business Analytics Trainer</h4><div class="org">MakeIntern, IIM Calcutta Rep · Jun 2023 – Present</div></div>
+      <div class="role"><h4>Program Director, Corporate Training</h4><div class="org">Jobaaj Learnings · Jan 2021 – Present</div></div>
+    </div>
+    <div role="tabpanel" id="panel-industry" aria-labelledby="tab-industry" hidden>
+      <div class="role"><h4>Senior Data Consultant</h4><div class="org">AllianceTek · Jul 2024 – Present</div><p>Segmentation and product analytics for ride-hailing clients.</p></div>
+      <div class="role"><h4>Data End-to-End Monitoring Analyst</h4><div class="org">Schneider Electric · Jun 2023 – Jul 2024</div><p>Automation that cut reporting time by more than 50%.</p></div>
+      <div class="role"><h4>Data Analyst</h4><div class="org">Nishtya Infotech · Jan 2021 – May 2023</div><p>A CRM and dashboards that saved hours a day and cut ad costs by 25–30%.</p></div>
+    </div>
+
+    <div class="cta glass">
+      <small>Have a team to train?</small>
+      <strong>Let's make your next cohort job-ready.</strong>
+      <div class="row"><a class="btn btn-primary" href="#contact">Book a training call</a></div>
+    </div>
+  </aside>
+
+  <aside class="panel" id="contact" aria-labelledby="contact-title" tabindex="-1">
+    <div class="panel-head"><button class="close glass" data-close>← Close</button><span>Work with me</span></div>
+    <h2 id="contact-title">Let's upskill <em>your team.</em></h2>
+    <p>Tell me who you're training, what they need to be able to do afterwards, and your dates. I'll reply with a suggested format and outline.</p>
+    <ul class="formats">
+      <li><b>Corporate bootcamps</b>Multi-day programmes for analysts, managers, and HR and finance teams.</li>
+      <li><b>AI automation for non-coders</b>n8n + Claude AI workflows your team can build and run themselves.</li>
+      <li><b>Campus workshops &amp; value-added courses</b>From one-day workshops to 30-hour courses, already run at 40+ colleges.</li>
+      <li><b>1:1 mentorship</b>For career switchers: portfolio projects, resume review and mock interviews.</li>
+      <li><b>Curriculum &amp; case-study design</b>For EdTechs and training companies that need job-ready content.</li>
+    </ul>
+    <div class="row contact-actions">
+      <a class="btn btn-primary" href="mailto:shivavashishtha0105@gmail.com?subject=Training%20enquiry">Email me about training</a>
+      <a class="btn btn-outline" href="https://linkedin.com/in/shivavashishtha" target="_blank" rel="noopener">Message me on LinkedIn ↗</a>
+    </div>
+    <p class="small-print">shivavashishtha0105@gmail.com · Gurugram, India (IST, UTC+5:30) · teaching worldwide</p>
+  </aside>
+</main>
+
+<script>
+// Live IST clock
+const clock = document.getElementById('clock');
+const fmt = new Intl.DateTimeFormat('en-GB', { timeZone:'Asia/Kolkata', hour:'2-digit', minute:'2-digit' });
+const tick = () => clock.textContent = fmt.format(new Date()) + ' IST';
+tick(); setInterval(tick, 30000);
+
+// Experience tabs (click + arrow keys)
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selectTab(tab) {
+  tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', on);
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  });
+  tab.focus();
+}
+tabs.forEach((t, i) => {
+  t.onclick = () => selectTab(t);
+  t.onkeydown = e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft')
+      selectTab(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]);
+  };
+});
+</script>
+
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
+<script type="module">
+import * as THREE from 'three';
+
+// ponytail: 3D only on wide screens with motion allowed; everyone else gets the static page.
+if (innerWidth >= 768 && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+  start().catch(err => console.warn('3D view disabled:', err));
+
+async function start() {
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true }); // throws without WebGL → static page stays
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight, false);
+
+  await Promise.all(['600 64px Inter','500 32px Inter','400 28px Inter'].map(f => document.fonts.load(f)));
+
+  const BG = 0x212529, SPACING = 14, START = -1.5;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(BG);
+  scene.fog = new THREE.Fog(BG, 14, 75);
+  const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 200);
+
+  // Turn the photo into a classic halftone: a hex grid of dots whose size carries the tone.
+  async function loadPortrait() {
+    const img = new Image(); img.src = 'assets/shiva.jpg'; await img.decode();
+    const CROP = { x:330, y:95, w:420, h:420 };   // head and shoulders from the 800×800 photo
+    const R = 360, c = document.createElement('canvas'); c.width = c.height = R;
+    const g = c.getContext('2d', { willReadFrequently:true });
+    g.drawImage(img, CROP.x, CROP.y, CROP.w, CROP.h, 0, 0, R, R);
+    const px = g.getImageData(0, 0, R, R).data, L = new Float32Array(R * R);
+    for (let i = 0; i < R * R; i++) L[i] = (.2126 * px[i * 4] + .7152 * px[i * 4 + 1] + .0722 * px[i * 4 + 2]) / 255;
+
+    // separable box blur
+    function blur(src, r) {
+      const tmp = new Float32Array(R * R), out = new Float32Array(R * R), n = 2 * r + 1;
+      for (let y = 0; y < R; y++) for (let x = 0; x < R; x++) {
+        let a = 0; for (let k = -r; k <= r; k++) a += src[y * R + Math.min(R - 1, Math.max(0, x + k))]; tmp[y * R + x] = a / n;
+      }
+      for (let y = 0; y < R; y++) for (let x = 0; x < R; x++) {
+        let a = 0; for (let k = -r; k <= r; k++) a += tmp[Math.min(R - 1, Math.max(0, y + k)) * R + x]; out[y * R + x] = a / n;
+      }
+      return out;
+    }
+    const soft = blur(L, 1), wide = blur(L, 7);   // soft kills JPEG noise; wide drives the local-contrast boost
+    const at = (a, u, v) => a[Math.min(R - 1, (v * R) | 0) * R + Math.min(R - 1, (u * R) | 0)];
+
+    const G = 200, rowH = Math.sqrt(3) / 2, rows = Math.floor(G / rowH), points = [];
+    for (let row = 0; row < rows; row++) for (let col = 0; col < G; col++) {
+      const u = (col + .5 + (row % 2) * .5) / G, v = (row + .5) * rowH / G;
+      if (u >= 1 || v >= 1) continue;
+      // soft oval mask: the portrait melts into the page instead of ending in a square
+      const rr = Math.hypot((u - .5) / .5, (v - .55) / .6);
+      const mask = Math.min(1, Math.max(0, (1.05 - rr) / .3)) * Math.min(1, Math.max(0, (.97 - v) / .22));   // oval + chest fade
+      const b = at(soft, u, v), local = b + 1.1 * (b - at(wide, u, v));   // unsharp mask: eyes, glasses, beard pop
+      const d = 1 / R, edge = Math.hypot(at(soft, u + d, v) - at(soft, u - d, v), at(soft, u, v + d) - at(soft, u, v - d));
+      const lift = Math.min(1, Math.max(0, (local - .16) / .86));        // drop the dark curtain, stretch the rest
+      const tone = Math.max(Math.pow(lift, 1.3), Math.min(.3, edge * 4)) * mask;   // edges keep the hair outline
+      if (tone < .06) continue;
+      points.push({ u, v, tone });
+    }
+    const body = points.filter(q => q.v > .62 && q.tone > .4);
+    return { G, points, pick:() => body[(Math.random() * body.length) | 0] };
+  }
+
+  // Read programme data from the HTML list (single source of truth)
+  const items = [...document.querySelectorAll('#work li')].map(li => ({
+    chapter: li.dataset.chapter, tag: li.querySelector('.tag').textContent,
+    title: li.querySelector('h3').textContent, org: li.querySelector('.org').textContent, d: li.querySelector('.d').textContent,
+  }));
+  const N = items.length;
+  const pos = i => new THREE.Vector3(Math.sin(i * 1.7) * 3.2, Math.cos(i * 1.3) * 1.6, -i * SPACING);
+
+  function wrap(g, text, maxW) {
+    const lines = []; let line = '';
+    for (const w of text.split(' ')) {
+      const t = line ? line + ' ' + w : w;
+      if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+    }
+    return [...lines, line];
+  }
+
+  function cardTexture(it, i) {
+    const c = document.createElement('canvas'); c.width = 1024; c.height = 640;
+    const g = c.getContext('2d');
+    // Glass pane: frosted backing (keeps text readable over cards behind), top sheen, bright edge
+    g.fillStyle = 'rgba(52,58,64,.86)'; g.beginPath(); g.roundRect(2, 2, 1020, 636, 36); g.fill();
+    const body = g.createLinearGradient(0, 0, 1024, 640);
+    body.addColorStop(0, 'rgba(248,249,250,.20)'); body.addColorStop(1, 'rgba(173,181,189,.06)');
+    g.fillStyle = body; g.beginPath(); g.roundRect(2, 2, 1020, 636, 36); g.fill();
+    const sheen = g.createLinearGradient(0, 0, 0, 260);
+    sheen.addColorStop(0, 'rgba(248,249,250,.16)'); sheen.addColorStop(1, 'rgba(248,249,250,0)');
+    g.fillStyle = sheen; g.beginPath(); g.roundRect(2, 2, 1020, 260, [36, 36, 0, 0]); g.fill();
+    const edge = g.createLinearGradient(0, 0, 1024, 640);
+    edge.addColorStop(0, 'rgba(248,249,250,.55)'); edge.addColorStop(.5, 'rgba(248,249,250,.12)'); edge.addColorStop(1, 'rgba(248,249,250,.35)');
+    g.strokeStyle = edge; g.lineWidth = 3; g.beginPath(); g.roundRect(2, 2, 1020, 636, 36); g.stroke();
+
+    g.fillStyle = '#adb5bd'; g.font = '500 28px Inter'; g.fillText(String(i + 1).padStart(2, '0') + ' / ' + N, 56, 88);
+    g.font = '600 26px Inter'; const tw = g.measureText(it.tag).width;
+    g.fillStyle = 'rgba(248,249,250,.14)'; g.strokeStyle = 'rgba(248,249,250,.3)'; g.lineWidth = 2;
+    g.beginPath(); g.roundRect(968 - tw - 32, 52, tw + 32, 50, 12); g.fill(); g.stroke();
+    g.fillStyle = '#e9ecef'; g.fillText(it.tag, 968 - tw - 16, 86);
+    g.fillStyle = '#f8f9fa'; g.font = '600 64px Inter';
+    const lines = wrap(g, it.title, 912).slice(0, 2);
+    lines.forEach((l, k) => g.fillText(l, 56, 300 - (lines.length - 1) * 74 + k * 74));
+    g.fillStyle = '#dee2e6'; g.font = '500 32px Inter'; g.fillText(it.org, 56, 380);
+    g.fillStyle = '#adb5bd'; g.font = '400 28px Inter'; wrap(g, it.d, 912).slice(0, 2).forEach((l, k) => g.fillText(l, 56, 540 + k * 40));
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    return tex;
+  }
+
+  const cardGeo = new THREE.PlaneGeometry(4.8, 3);
+  const cards = items.map((it, i) => {
+    const m = new THREE.Mesh(cardGeo, new THREE.MeshBasicMaterial({ map:cardTexture(it, i), transparent:true }));
+    m.position.copy(pos(i)); m.userData.y = m.position.y; scene.add(m);
+    return m;
+  });
+
+  // Tool chips scattered around the tunnel
+  const TOOLS = ['SQL','Python','Power BI','DAX','Excel','VBA','Tableau','Looker Studio','Machine Learning','Deep Learning','LLMs','Prompt Engineering','MLOps','n8n','Claude AI','GPT-4','Gemini','NotebookLM'];
+  const chipCache = {};
+  function chipMaterial(label) {
+    if (chipCache[label]) return chipCache[label];
+    const c = document.createElement('canvas'), g = c.getContext('2d');
+    g.font = '600 52px Inter'; const w = Math.ceil(g.measureText(label).width) + 64;
+    c.width = w; c.height = 96; g.font = '600 52px Inter';
+    g.fillStyle = 'rgba(73,80,87,.55)'; g.strokeStyle = 'rgba(248,249,250,.28)'; g.lineWidth = 3;
+    g.beginPath(); g.roundRect(2, 2, w - 4, 92, 46); g.fill(); g.stroke();
+    g.fillStyle = '#e9ecef'; g.fillText(label, 32, 66);
+    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+    return chipCache[label] = { mat:new THREE.MeshBasicMaterial({ map:tex, transparent:true, opacity:.85 }), aspect:w / 96 };
+  }
+  const chips = [];
+  for (let k = 0; k < 34; k++) {
+    const { mat, aspect } = chipMaterial(TOOLS[k % TOOLS.length]);
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.42 * aspect, 0.42), mat);
+    const a = Math.random() * Math.PI * 2, r = 6 + Math.random() * 9;
+    m.position.set(Math.cos(a) * r, Math.sin(a) * r * 0.6, 20 - Math.random() * (N * SPACING + 30));
+    m.userData.spin = (Math.random() - .5) * .002;
+    scene.add(m); chips.push(m);
+  }
+
+  // ---------- Portrait: dots draw the face; cards and chips emerge from it as you scroll ----------
+  const portrait = await loadPortrait();
+  // Size and place the portrait to the right of the hero box and below the top bar, whatever the screen size.
+  const visH = 2 * 18 * Math.tan(THREE.MathUtils.degToRad(27.5)), halfW = visH / 2 * camera.aspect;
+  const PH = visH * .82, heroRight = (Math.min(32 + 520, innerWidth * .45) / innerWidth * 2 - 1) * halfW;
+  const PC = new THREE.Vector3(Math.min(halfW - PH * .42, Math.max(heroRight + PH * .4, 0)), -visH * .06, 10);
+  const toWorld = q => new THREE.Vector3((q.u - .5) * PH + PC.x, (.5 - q.v) * PH + PC.y, PC.z + q.tone * .5);
+  [...cards, ...chips].forEach(m => { m.userData.home = toWorld(portrait.pick()); m.userData.tunnel = m.position.clone(); });
+
+  const greys = ['#343a40','#495057','#6c757d','#adb5bd','#ced4da','#dee2e6','#e9ecef','#f8f9fa']
+    .map(h => new THREE.Color().setHex(parseInt(h.slice(1), 16), THREE.LinearSRGBColorSpace));   // raw palette values, no colour conversion
+  const AMBIENT = 3500, PORTRAIT_N = portrait.points.length, DOTS = PORTRAIT_N + AMBIENT;
+  const home = new Float32Array(DOTS * 3), tunnel = new Float32Array(DOTS * 3), tone = new Float32Array(DOTS * 3);
+  const size = new Float32Array(DOTS), delay = new Float32Array(DOTS);
+  const spacing = PH / portrait.G;
+  for (let k = 0; k < DOTS; k++) {
+    const a = Math.random() * Math.PI * 2, r = 2.5 + Math.pow(Math.random(), .6) * 30;
+    tunnel.set([Math.cos(a) * r, Math.sin(a) * r * .7, 40 - Math.random() * (N * SPACING + 80)], k * 3);
+    let c;
+    if (k < PORTRAIT_N) {
+      const q = portrait.points[k], w = toWorld(q);
+      home.set([w.x, w.y, w.z], k * 3);
+      size[k] = spacing * (.55 + .7 * Math.sqrt(q.tone));   // dense dots read as a photo; brightness widens them
+      c = greys[Math.min(7, Math.floor(q.tone * 8))];          // all 8 visible greys for smooth shading
+      delay[k] = Math.random() * .35;
+    } else {   // ambient field: fills the rest of the page around the portrait
+      home.set(tunnel.subarray(k * 3, k * 3 + 3), k * 3);
+      size[k] = .07;
+      c = greys[3 + Math.floor(Math.random() * 5)];
+    }
+    tone.set([c.r, c.g, c.b], k * 3);
+  }
+  const dotGeo = new THREE.BufferGeometry();
+  dotGeo.setAttribute('position', new THREE.BufferAttribute(home, 3));
+  dotGeo.setAttribute('tunnel', new THREE.BufferAttribute(tunnel, 3));
+  dotGeo.setAttribute('tone', new THREE.BufferAttribute(tone, 3));
+  dotGeo.setAttribute('size', new THREE.BufferAttribute(size, 1));
+  dotGeo.setAttribute('delay', new THREE.BufferAttribute(delay, 1));
+  const uniforms = { morph:{ value:0 }, scale:{ value:1 } };
+  const updateScale = () => { uniforms.scale.value = renderer.domElement.height / 2 / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); };
+  updateScale();
+  const dots = new THREE.Points(dotGeo, new THREE.ShaderMaterial({
+    uniforms, transparent:true, depthWrite:false,
+    vertexShader:`
+      attribute vec3 tunnel; attribute vec3 tone; attribute float size; attribute float delay;
+      uniform float morph; uniform float scale;
+      varying vec3 vTone; varying float vAlpha;
+      void main() {
+        float e = clamp((morph - delay) / .65, 0., 1.); e = e * e * (3. - 2. * e);
+        vec4 mv = modelViewMatrix * vec4(mix(position, tunnel, e), 1.);
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = max(1., mix(size, .07, e) * scale / -mv.z);
+        vTone = tone;
+        vAlpha = clamp((75. + mv.z) / 61., 0., 1.);   // distance fade, matches the scene fog
+      }`,
+    fragmentShader:`
+      varying vec3 vTone; varying float vAlpha;
+      void main() {
+        vec2 c = gl_PointCoord - .5;
+        float r = length(c);
+        if (r > .5) discard;
+        gl_FragColor = vec4(vTone, vAlpha * smoothstep(.5, .38, r));   // soft round edge
+      }`,
+  }));
+  dots.frustumCulled = false;
+  scene.add(dots);
+  const smooth = s => s * s * (3 - 2 * s);
+
+  // ---------- Navigation state ----------
+  let target = START, progress = START, snapTimer;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const setTarget = v => { target = clamp(v, START, N - 1); };
+  const panelOpen = () => document.querySelector('.panel.open');
+
+  addEventListener('wheel', e => {
+    if (panelOpen()) return;
+    e.preventDefault();
+    target = clamp(target + e.deltaY * (e.deltaMode ? 0.05 : 0.0016), START, N - 1);
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => { if (target > -0.6) setTarget(Math.round(Math.max(0, target))); }, 220);
+  }, { passive:false });
+
+  let touchY = null;
+  addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive:true });
+  addEventListener('touchmove', e => {
+    if (panelOpen() || touchY === null) return;
+    const y = e.touches[0].clientY; target = clamp(target + (touchY - y) * 0.006, START, N - 1); touchY = y;
+  }, { passive:true });
+  addEventListener('touchend', () => { touchY = null; if (target > -0.6) setTarget(Math.round(Math.max(0, target))); });
+
+  const step = dir => setTarget(dir > 0 ? (target < 0 ? 0 : Math.round(target) + 1) : (Math.round(target) - 1 < 0 ? START : Math.round(target) - 1));
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape') return closePanels();
+    if (panelOpen() || e.target.closest('button, a, input')) return;
+    if (['ArrowDown','PageDown',' '].includes(e.key)) { e.preventDefault(); step(1); }
+    if (['ArrowUp','PageUp'].includes(e.key)) { e.preventDefault(); step(-1); }
+    if (e.key === 'Home') setTarget(START);
+    if (e.key === 'End') setTarget(N - 1);
+  });
+
+  let opener = null;
+  function openPanel(id) {
+    closePanels(false);
+    const el = document.getElementById(id);
+    opener = document.activeElement;
+    el.classList.add('open'); el.scrollTop = 0;
+    setTimeout(() => el.focus(), 50);
+  }
+  function closePanels(restore = true) {
+    const el = panelOpen(); if (!el) return;
+    el.classList.remove('open');
+    if (restore && opener) opener.focus();
+  }
+  document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => closePanels());
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]'); if (!a) return;
+    const id = a.getAttribute('href').slice(1);
+    e.preventDefault();
+    if (id === 'about' || id === 'contact') return openPanel(id);
+    closePanels(false);
+    const li = document.getElementById(id);
+    setTarget(id === 'work' ? 0 : li && li.matches('#work li') ? workLis.indexOf(li) : START);
+  });
+  document.getElementById('back').onclick = () => setTarget(START);
+  document.getElementById('see-all').onclick = () => openPanel('work');
+
+  // "See all" grid: every card is a shortcut into the fly-through
+  const workLis = [...document.querySelectorAll('#work li')];
+  workLis.forEach((li, i) => {
+    li.tabIndex = 0;
+    const go = () => { closePanels(false); setTarget(i); };
+    li.onclick = go;
+    li.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } };
+  });
+
+  // Pointer parallax
+  const mouse = new THREE.Vector2(), look = new THREE.Vector2();
+  addEventListener('pointermove', e => mouse.set(e.clientX / innerWidth - .5, e.clientY / innerHeight - .5));
+
+  addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight, false);
+    updateScale();
+  });
+
+  // HUD
+  const hud = { num:document.getElementById('hud-num'), chapter:document.getElementById('hud-chapter'), title:document.getElementById('hud-title'), sub:document.getElementById('hud-sub') };
+  let shown = -1;
+  function updateHud(i) {
+    if (i === shown) return; shown = i;
+    hud.num.textContent = String(i + 1).padStart(2, '0');
+    hud.title.textContent = items[i].title;
+    hud.sub.textContent = items[i].org;
+    const same = items.filter(it => it.chapter === items[i].chapter);
+    hud.chapter.textContent = `${items[i].chapter} · ${same.indexOf(items[i]) + 1} of ${same.length}`;
+  }
+
+  // Camera follows a path through the card positions
+  const pathAt = t => {
+    if (t <= 0) return pos(0).multiplyScalar(Math.max(0, 1 + t / -START));
+    const a = Math.floor(t), b = Math.min(N - 1, a + 1);
+    return pos(a).lerp(pos(b), t - a);
+  };
+
+  const clockT = new THREE.Clock();
+  document.body.classList.add('is-3d');
+  (function frame() {
+    const t = clockT.getElapsedTime();
+    progress += (target - progress) * 0.07;
+    const camZ = 7 - progress * SPACING;
+    const c = pathAt(progress);
+    look.lerp(mouse, .05);
+    camera.position.set(c.x + look.x * 1.2, c.y - look.y * .8, camZ);
+    camera.lookAt(c.x, c.y, camZ - 7);
+
+    // 0 = assembled portrait, 1 = scattered into the fly-through tunnel
+    const morph = smooth(clamp((progress - START) / (-0.3 - START), 0, 1));
+    uniforms.morph.value = morph;
+    const emerge = clamp((morph - .05) * 4, 0, 1);   // cards and chips stay hidden while the face is whole
+
+    cards.forEach((m, i) => {
+      m.position.lerpVectors(m.userData.home, m.userData.tunnel, morph);
+      m.position.y += Math.sin(t * .6 + i) * .06;
+      m.scale.setScalar(.16 + .84 * morph);
+      const d = camZ - m.position.z;
+      m.material.opacity = clamp((d - 0.6) / 2.4, 0, 1) * emerge;
+      m.visible = d > 0.6 && emerge > 0;
+    });
+    chips.forEach(m => {
+      m.position.lerpVectors(m.userData.home, m.userData.tunnel, morph);
+      m.scale.setScalar(.3 + .7 * morph);
+      m.rotation.z += m.userData.spin * morph;
+      m.material.opacity = .85 * emerge;
+      m.visible = camZ - m.position.z > 0.5 && emerge > 0;
+    });
+
+    const flying = progress > -0.6;
+    document.body.classList.toggle('fly', flying);
+    if (flying) updateHud(clamp(Math.round(progress), 0, N - 1));
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  })();
+}
+</script>
+</body>
+</html>
