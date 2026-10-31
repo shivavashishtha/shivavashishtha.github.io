@@ -150,6 +150,7 @@ body:not(.is-3d) .only-3d { display:none; }
 .hud-right { display:flex; align-items:center; gap:12px; font-size:13px; color:var(--g400); }
 .hint { position:fixed; right:24px; bottom:24px; z-index:10; font-size:12px; color:var(--g400); letter-spacing:.4px; padding:6px 14px; border-radius:var(--r-full); }
 .fly .hint { opacity:0; }
+@media (max-width:1100px) { .hint { display:none; } }   /* would sit on the name; the hero's buttons already invite scrolling */
 
 #scene { position:fixed; inset:0; width:100%; height:100%; display:none; opacity:0; transition:opacity .9s ease; }
 .ready #scene { opacity:1; }
@@ -246,6 +247,36 @@ body:not(.is-3d) .panel { padding:28px 20px; border-radius:var(--r-xl); backgrou
   body:not(.is-3d) .hero { margin-bottom:0; }
   body:not(.is-3d) .photo { width:100%; height:auto; aspect-ratio:1; margin:0; }
   body:not(.is-3d) .name { grid-column:1/-1; font-size:clamp(72px,11vw,150px); }
+}
+
+/* Phones: name and photo first, compact non-sticky bar, 44px tap targets */
+@media (max-width:767px) {
+  body:not(.is-3d) .topbar { position:relative; inset:auto; }
+  .mark { width:44px; height:44px; }
+  .tab { min-height:44px; }
+  body:not(.is-3d) .intro { display:flex; flex-direction:column; padding-top:24px; }
+  body:not(.is-3d) .photo { order:1; width:120px; height:120px; margin-bottom:12px; }
+  body:not(.is-3d) .name { order:2; margin-bottom:20px; }
+  body:not(.is-3d) .hero { order:3; }
+  .topbar nav { flex-wrap:wrap; gap:4px 18px; }
+  .topbar nav a { display:inline-flex; align-items:center; min-height:44px; }
+  .recs a, .facts a { display:inline-block; padding:10px 0; }
+}
+section[id], aside[id], #results { scroll-margin-top:16px; }
+
+/* Short landscape screens (e.g. 1280×600): tighter hero, name scaled to height */
+@media (min-width:768px) and (max-height:720px) {
+  .is-3d .name { font-size:min(13.5vw, 24vh); }
+  .is-3d .hero { padding:16px 20px; }
+  .is-3d .hero .pitch { font-size:28px; margin:6px 0 8px; }
+  .is-3d .hero .actions { margin:12px 0 10px; }
+  .is-3d .hero-quote { display:none; }
+}
+/* Large screens: scale the hero up a little */
+@media (min-width:1600px) {
+  .is-3d .hero { max-width:600px; }
+  .is-3d .hero .pitch { font-size:40px; }
+  .is-3d .hero .support { font-size:15.5px; }
 }
 
 /* ---------- 3D mode ---------- */
@@ -603,27 +634,38 @@ async function start() {
 
   // ---------- Portrait: dots draw the face; cards and chips emerge from it as you scroll ----------
   const portrait = await loadPortrait();
-  // Size and place the portrait to the right of the hero box and below the top bar, whatever the screen size.
-  const visH = 2 * 18 * Math.tan(THREE.MathUtils.degToRad(27.5)), halfW = visH / 2 * camera.aspect;
-  const PH = visH * .82, heroRight = (Math.min(32 + 520, innerWidth * .45) / innerWidth * 2 - 1) * halfW;
-  const PC = new THREE.Vector3(Math.min(halfW - PH * .42, Math.max(heroRight + PH * .4, 0)), -visH * .06, 10);
+  // Size and place the portrait from the real layout: right of the hero box on landscape screens,
+  // above it on upright screens (tablets in portrait). Re-run on resize / rotation.
+  let PH = 1;
+  const PC = new THREE.Vector3();
+  function placePortrait() {
+    const visH = 2 * 18 * Math.tan(THREE.MathUtils.degToRad(27.5)), halfW = visH / 2 * camera.aspect, k = visH / innerHeight;
+    const hero = document.querySelector('.hero').getBoundingClientRect(), barBottom = document.querySelector('.topbar').getBoundingClientRect().bottom;
+    if (innerWidth / innerHeight < 1.05) {
+      const px = Math.max(160, Math.min(hero.top - barBottom - 16, innerWidth * .95));
+      PH = px * k;
+      PC.set(0, visH / 2 - (barBottom + 8 + px / 2) * k, 10);
+    } else {
+      const heroRight = (hero.right / innerWidth * 2 - 1) * halfW;   // fit the face between the hero box and the screen edge
+      PH = Math.min(visH * .82, (halfW - heroRight) * 1.15);
+      PC.set((heroRight + halfW) / 2, -visH * .06, 10);
+    }
+  }
+  placePortrait();
   const toWorld = q => new THREE.Vector3((q.u - .5) * PH + PC.x, (.5 - q.v) * PH + PC.y, PC.z + q.tone * .5);
-  [...cards, ...chips].forEach(m => { m.userData.home = toWorld(portrait.pick()); m.userData.tunnel = m.position.clone(); });
+  [...cards, ...chips].forEach(m => { m.userData.q = portrait.pick(); m.userData.home = toWorld(m.userData.q); m.userData.tunnel = m.position.clone(); });
 
   const greys = ['#343a40','#495057','#6c757d','#adb5bd','#ced4da','#dee2e6','#e9ecef','#f8f9fa']
     .map(h => new THREE.Color().setHex(parseInt(h.slice(1), 16), THREE.LinearSRGBColorSpace));   // raw palette values, no colour conversion
   const AMBIENT = 3500, PORTRAIT_N = portrait.points.length, DOTS = PORTRAIT_N + AMBIENT;
   const home = new Float32Array(DOTS * 3), tunnel = new Float32Array(DOTS * 3), tone = new Float32Array(DOTS * 3);
   const size = new Float32Array(DOTS), delay = new Float32Array(DOTS);
-  const spacing = PH / portrait.G;
   for (let k = 0; k < DOTS; k++) {
     const a = Math.random() * Math.PI * 2, r = 2.5 + Math.pow(Math.random(), .6) * 30;
     tunnel.set([Math.cos(a) * r, Math.sin(a) * r * .7, 40 - Math.random() * (N * SPACING + 80)], k * 3);
     let c;
     if (k < PORTRAIT_N) {
-      const q = portrait.points[k], w = toWorld(q);
-      home.set([w.x, w.y, w.z], k * 3);
-      size[k] = spacing * (.55 + .7 * Math.sqrt(q.tone));   // dense dots read as a photo; brightness widens them
+      const q = portrait.points[k];
       c = greys[Math.min(7, Math.floor(q.tone * 8))];          // all 8 visible greys for smooth shading
       delay[k] = Math.random() * .35;
     } else {   // ambient field: fills the rest of the page around the portrait
@@ -633,6 +675,17 @@ async function start() {
     }
     tone.set([c.r, c.g, c.b], k * 3);
   }
+  // Portrait dot homes and sizes depend on the layout, so they are (re)computed here
+  function fillHomes() {
+    const spacing = PH / portrait.G;
+    for (let k = 0; k < PORTRAIT_N; k++) {
+      const q = portrait.points[k], w = toWorld(q);
+      home.set([w.x, w.y, w.z], k * 3);
+      size[k] = spacing * (.55 + .7 * Math.sqrt(q.tone));   // dense dots read as a photo; brightness widens them
+    }
+    [...cards, ...chips].forEach(m => { m.userData.home = toWorld(m.userData.q); });
+  }
+  fillHomes();
   const dotGeo = new THREE.BufferGeometry();
   dotGeo.setAttribute('position', new THREE.BufferAttribute(home, 3));
   dotGeo.setAttribute('tunnel', new THREE.BufferAttribute(tunnel, 3));
@@ -744,6 +797,8 @@ async function start() {
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight, false);
     updateScale();
+    placePortrait(); fillHomes();
+    dotGeo.attributes.position.needsUpdate = true; dotGeo.attributes.size.needsUpdate = true;
   });
 
   // HUD
